@@ -9,12 +9,6 @@ trait HasComponent<T> {
     fn get_component_raw(&self) -> &T;
 }
 
-// trait ComponentAccess {
-//     fn get_component<T>(&self) -> &T;
-// }
-//
-// impl ComponentAccess for
-
 fn get_component<C, E: HasComponent<C>>(entity: &E) -> &C {
     HasComponent::<C>::get_component_raw(entity)
 }
@@ -60,8 +54,8 @@ impl HasComponent<Positioned> for Player {
 fn print_name_and_position<T: HasComponent<Named> + HasComponent<Positioned>>(entity: &T) {
     println!(
         "{} at {}",
-        get_component::<Named, T>(entity).name,  // TODO even better syntax, infer T
-        get_component::<Positioned, T>(entity).position,
+        get_component::<Named, _>(entity).name,
+        get_component::<Positioned, _>(entity).position,
     );
 }
 
