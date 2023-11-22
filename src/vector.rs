@@ -1,5 +1,6 @@
 use std::ops::Add;
 
+
 #[derive(Debug)]  // TODO custom Debug/Display impl
 pub struct Vector2<T>(pub T, pub T);
 
