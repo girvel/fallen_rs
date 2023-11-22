@@ -1,13 +1,12 @@
-use crate::components::{Displayed, Named, Positioned};
-use crate::ecs::{AwareOfComponent, CanRegister, component, HasComponent, try_component};
+use crate::components::{Displayed, Entity, Named, Positioned};
+use crate::ecs::{CanRegister, component, HasComponent, try_component};
 use crate::entities::ghost::Ghost;
 use crate::entities::player::Player;
 
 
 // ECS better syntax like has_components!(Named, Positioned)
 fn print_name_and_position<
-    T: HasComponent<Named> + HasComponent<Positioned> +
-    AwareOfComponent<Named> + AwareOfComponent<Positioned> + AwareOfComponent<Displayed>
+    T: HasComponent<Named> + HasComponent<Positioned> + Entity
 >(entity: &T) {
     let postfix = try_component::<Displayed, _>(entity)
         .map_or(String::from(""), |displayed| format!(" ({})", displayed.character));
