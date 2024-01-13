@@ -4,12 +4,13 @@ use crate::entities::ghost::Ghost;
 use crate::entities::player::Player;
 
 
-// ECS better syntax like has_components!(Named, Positioned)
 fn print_name_and_position<
     T: HasComponent<Named> + HasComponent<Positioned> + Entity
->(entity: &T) {
+>(entity: &mut T) {
     let postfix = try_component::<Displayed, _>(entity)
         .map_or(String::from(""), |displayed| format!(" ({})", displayed.character));
+
+    component::<Positioned, _>(entity).position.1 += 1;
 
     println!(
         "{}{} at {}",
@@ -29,18 +30,18 @@ pub struct PrintSystem {
 
 impl PrintSystem {
     pub fn new() -> Self {
-        PrintSystem {
+        Self {
             players: vec![],
             ghosts: vec![]
         }
     }
 
-    pub fn update(&self) {
-        for player in &self.players {
+    pub fn update(&mut self) {
+        for player in &mut self.players {
             print_name_and_position(player);
         }
 
-        for ghost in &self.ghosts {
+        for ghost in &mut self.ghosts {
             print_name_and_position(ghost);
         }
     }

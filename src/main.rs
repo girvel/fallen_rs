@@ -14,6 +14,7 @@ mod systems;  // TODO figure out what to do with this thing
 
 // TODO mutable components
 // TODO multiple systems
+// TODO third system that accepts only one of the entity types
 
 fn main() {
     let mut print_system = PrintSystem::new();
