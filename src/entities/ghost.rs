@@ -13,31 +13,51 @@ impl Ghost {
 }
 
 impl HasComponent<Named> for Ghost {
-    fn get_component_raw(&mut self) -> &mut Named {
+    fn get_component_raw(&self) -> &Named {
+        &self.named
+    }
+
+    fn get_component_mut_raw(&mut self) -> &mut Named {
         &mut self.named
     }
 }
 
 impl HasComponent<Positioned> for Ghost {
-    fn get_component_raw(&mut self) -> &mut Positioned {
+    fn get_component_raw(&self) -> &Positioned {
+        &self.positioned
+    }
+    
+    fn get_component_mut_raw(&mut self) -> &mut Positioned {
         &mut self.positioned
     }
 }
 
 impl AwareOfComponent<Named> for Ghost {
-    fn try_get_component_raw(&mut self) -> Option<&mut Named> {
+    fn try_get_component_raw(&self) -> Option<&Named> {
+        Some(&self.named)
+    }
+    
+    fn try_get_component_mut_raw(&mut self) -> Option<&mut Named> {
         Some(&mut self.named)
     }
 }
 
 impl AwareOfComponent<Positioned> for Ghost {
-    fn try_get_component_raw(&mut self) -> Option<&mut Positioned> {
+    fn try_get_component_raw(&self) -> Option<&Positioned> {
+        Some(&self.positioned)
+    }
+    
+    fn try_get_component_mut_raw(&mut self) -> Option<&mut Positioned> {
         Some(&mut self.positioned)
     }
 }
 
 impl AwareOfComponent<Displayed> for Ghost {
-    fn try_get_component_raw(&mut self) -> Option<&mut Displayed> {
+    fn try_get_component_raw(&self) -> Option<&Displayed> {
+        None
+    }
+
+    fn try_get_component_mut_raw(&mut self) -> Option<&mut Displayed> {
         None
     }
 }

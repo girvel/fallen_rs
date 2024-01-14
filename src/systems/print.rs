@@ -1,5 +1,5 @@
 use crate::components::{Displayed, Entity, Named, Positioned};
-use crate::ecs::{CanRegister, component, HasComponent, try_component};
+use crate::ecs::{CanRegister, component, component_mut, HasComponent, try_component};
 use crate::entities::ghost::Ghost;
 use crate::entities::player::Player;
 
@@ -10,7 +10,7 @@ fn print_name_and_position<
     let postfix = try_component::<Displayed, _>(entity)
         .map_or(String::from(""), |displayed| format!(" ({})", displayed.character));
 
-    component::<Positioned, _>(entity).position.1 += 1;
+    component_mut::<Positioned, _>(entity).position.1 += 1;
 
     println!(
         "{}{} at {}",
