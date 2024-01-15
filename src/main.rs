@@ -2,8 +2,10 @@ use crate::components::{Displayed, Named, Positioned};
 use crate::ecs::CanRegister;
 use crate::entities::ghost::Ghost;
 use crate::entities::player::Player;
-use crate::systems::print::{PrintSystem};
+use crate::systems::print::PrintSystem;
 use crate::vector::Vector2;
+
+use ecs_macros::entity;
 
 mod vector;
 mod ecs;
@@ -17,6 +19,8 @@ mod systems;  // TODO figure out what to do with this thing
 // TODO third system that accepts only one of the entity types
 
 fn main() {
+    println!("{}", entity!(42));
+
     let mut print_system = PrintSystem::new();
 
     print_system.register(Player::new(
