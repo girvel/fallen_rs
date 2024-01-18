@@ -3,6 +3,7 @@ use quote::{quote, format_ident};
 use syn::{parse_macro_input, ItemStruct, Fields, FnArg, PatType, PatIdent, Pat, Ident, Type, Token, Index, Result, parse2};
 use syn::punctuated::Punctuated;
 use syn::parse::{Parse, ParseStream};
+use itertools::Itertools;
 
 struct CommaSeparatedTypes {
     types: Punctuated<Type, Token![,]>,
@@ -31,6 +32,24 @@ pub fn entity(args: TokenStream, input: TokenStream) -> TokenStream {
         .collect();
 
     let all_components: Vec<&Type> = args.types.iter().collect();
+
+    let duplicate_components: Vec<(usize, &Type)> = all_components
+        .iter()
+        .cloned()
+        .enumerate()
+        .filter(|(i, c1)| all_components.iter().skip(i + 1).any(|c2| **c1 == **c2))
+        .collect();
+
+    // TODO test this
+    if duplicate_components.len() > 0 {
+        panic!("Duplicate components present in #[entity]'s arguments: {}",
+            duplicate_components
+                .iter()
+                .map(|(i, &ref c)| format!("{} (#{})", quote! { #c }.to_string(), i))
+                .collect::<Vec<String>>()
+                .join(", ")
+        )
+    }
 
     let new_args_base: Vec<(Ident, &Type)> = fields
         .iter()
@@ -76,7 +95,6 @@ pub fn entity(args: TokenStream, input: TokenStream) -> TokenStream {
     let impl_aware_of_components: Vec<proc_macro2::TokenStream> = all_components
         .iter()
         .map(|&component_ty| {
-            // TODO test that components are unique
             let (const_return, mut_return) = match fields.iter().position(|&field_ty| field_ty == component_ty) {
                 Some(i) => (
                     quote! { Some(&self.#i) }, 
