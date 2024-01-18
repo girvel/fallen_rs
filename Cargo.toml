@@ -1,4 +1,5 @@
 workspace = { members = ["ecs_macros"] }
+
 [package]
 name = "fallen_rs"
 version = "0.1.0"

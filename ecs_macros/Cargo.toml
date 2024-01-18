@@ -12,3 +12,4 @@ proc_macro = true
 quote = "*"
 syn = { version = "*", features = ["full", "extra-traits"] }
 proc-macro2 = "*"
+macro_state = "0.2.0"
