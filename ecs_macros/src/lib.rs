@@ -1,11 +1,26 @@
+use std::alloc::alloc_zeroed;
+
 use proc_macro::TokenStream;
 use quote::{quote, format_ident};
-use syn::{parse_macro_input, ItemStruct, Fields, FnArg, PatType, PatIdent, Pat, Ident, Type, Token, Index};
+use syn::{parse_macro_input, ItemStruct, Fields, FnArg, PatType, PatIdent, Pat, Ident, Type, Token, Index, Result, parse2};
 use syn::punctuated::Punctuated;
+use syn::parse::{Parse, ParseStream};
+
+struct CommaSeparatedTypes {
+    types: Punctuated<Type, Token![,]>,
+}
+
+impl Parse for CommaSeparatedTypes {
+    fn parse(input: ParseStream) -> Result<Self> {
+        let types = input.parse_terminated(Type::parse, Token![,])?;
+        Ok(Self { types })
+    }
+}
 
 #[proc_macro_attribute]
-pub fn entity(_args: TokenStream, input: TokenStream) -> TokenStream {
+pub fn entity(args: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemStruct);
+    let args: CommaSeparatedTypes = parse2(args.into()).expect("#[entity]'s arguments should be comma separated types");
 
     let struct_name = &input.ident;
 
@@ -16,6 +31,8 @@ pub fn entity(_args: TokenStream, input: TokenStream) -> TokenStream {
         .iter()
         .map(|field| &field.ty)
         .collect();
+
+    let all_components: Vec<&Type> = args.types.iter().collect();
 
     let new_args_base: Vec<(Ident, &Type)> = fields
         .iter()
@@ -58,7 +75,31 @@ pub fn entity(_args: TokenStream, input: TokenStream) -> TokenStream {
         })
         .collect();
 
-    quote! { 
+    let impl_aware_of_components: Vec<proc_macro2::TokenStream> = all_components
+        .iter()
+        .map(|&component_ty| {
+            // TODO test that components are unique
+            let (const_return, mut_return) = match fields.iter().position(|&field_ty| field_ty == component_ty) {
+                Some(i) => (
+                    quote! { Some(&self.#i) }, 
+                    quote! { Some(&mut self.#i) },
+                ),
+                None => (
+                    quote! { None }, 
+                    quote! { None },
+                )
+            };
+
+            quote! {
+                impl crate::ecs::AwareOfComponent<#component_ty> for #struct_name {
+                    fn try_get_component_raw(&self) -> Option<&#component_ty> { #const_return }
+                    fn try_get_component_mut_raw(&mut self) -> Option<&mut #component_ty> { #mut_return }
+                }
+            }
+        })
+        .collect();
+
+    quote! {
         #input
     
         impl #struct_name {
@@ -66,5 +107,7 @@ pub fn entity(_args: TokenStream, input: TokenStream) -> TokenStream {
         }
 
         #(#impl_has_components)*
+
+        #(#impl_aware_of_components)*
     }.into()
 }

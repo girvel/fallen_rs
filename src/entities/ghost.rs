@@ -2,7 +2,7 @@ use ecs_macros::entity;
 use crate::components::{Displayed, Named, Positioned};
 use crate::ecs::{AwareOfComponent, HasComponent};
 
-#[entity(Displayed)]
+#[entity(Named, Positioned, Displayed)]
 pub struct Ghost1(Named, Positioned);
 
 // entity_struct!(Ghost has [Named, Positioned] aware_of [Displayed]);
