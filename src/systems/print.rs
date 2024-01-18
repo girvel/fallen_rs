@@ -1,7 +1,6 @@
 use crate::components::{Displayed, Entity, Named, Positioned};
 use crate::ecs::{CanRegister, component, component_mut, HasComponent, try_component};
-use crate::entities::ghost::Ghost;
-use crate::entities::player::Player;
+use crate::entities::{Player, Ghost};
 
 
 fn print_name_and_position<

@@ -1,7 +1,6 @@
 use crate::components::{Displayed, Named, Positioned};
 use crate::ecs::CanRegister;
-use crate::entities::ghost::Ghost;
-use crate::entities::player::Player;
+use crate::entities::{Ghost, Player};
 use crate::systems::print::PrintSystem;
 use crate::vector::Vector2;
 
