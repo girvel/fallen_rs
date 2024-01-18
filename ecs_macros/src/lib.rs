@@ -3,7 +3,6 @@ use quote::{quote, format_ident};
 use syn::{parse_macro_input, ItemStruct, Fields, FnArg, PatType, PatIdent, Pat, Ident, Type, Token, Index, Result, parse2};
 use syn::punctuated::Punctuated;
 use syn::parse::{Parse, ParseStream};
-use itertools::Itertools;
 
 struct CommaSeparatedTypes {
     types: Punctuated<Type, Token![,]>,
@@ -102,14 +101,11 @@ pub fn entity(args: TokenStream, input: TokenStream) -> TokenStream {
         .iter()
         .map(|&component_ty| {
             let (const_return, mut_return) = match fields.iter().position(|&field_ty| field_ty == component_ty) {
-                Some(i) => (
-                    quote! { Some(&self.#i) }, 
-                    quote! { Some(&mut self.#i) },
-                ),
-                None => (
-                    quote! { None }, 
-                    quote! { None },
-                )
+                Some(i) => {
+                    let i = Index::from(i);
+                    (quote! { Some(&self.#i) }, quote! { Some(&mut self.#i) })
+                },
+                None => (quote! { None }, quote! { None })
             };
 
             quote! {

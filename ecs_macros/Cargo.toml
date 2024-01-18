@@ -12,4 +12,3 @@ proc_macro = true
 quote = "*"
 syn = { version = "*", features = ["full", "extra-traits"] }
 proc-macro2 = "*"
-itertools = "0.8.0"
