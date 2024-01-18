@@ -41,8 +41,12 @@ pub fn entity(_args: TokenStream, input: TokenStream) -> TokenStream {
 
     let impl_has_components: Vec<proc_macro2::TokenStream> = new_args_base
         .iter()
-        .map(|(_, ty)| quote! {
-
+        .enumerate()
+        .map(|(i, (_, ty))| quote! {
+            impl crate::ecs::HasComponent<#ty> for #struct_name {
+                fn get_component_raw(&self) -> &#ty { &self.#i }
+                fn get_component_mut_raw(&mut self) -> &mut #ty { &mut self.#i }
+            }
         })
         .collect();
 

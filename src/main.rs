@@ -1,5 +1,5 @@
 use crate::components::{Displayed, Named, Positioned};
-use crate::ecs::CanRegister;
+use crate::ecs::{CanRegister, component};
 use crate::entities::ghost::{Ghost, Ghost1};
 use crate::entities::player::Player;
 use crate::systems::print::PrintSystem;
@@ -22,7 +22,7 @@ fn main() {
         Positioned { position: Vector2(0, 0) },
     );
 
-    println!("{}", g1.0.name);
+    println!("{}", component::<Named, _>(&g1).name);
 
     let mut print_system = PrintSystem::new();
 

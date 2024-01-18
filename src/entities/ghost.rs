@@ -3,7 +3,7 @@ use crate::components::{Displayed, Named, Positioned};
 use crate::ecs::{AwareOfComponent, HasComponent};
 
 #[entity(Displayed)]
-pub struct Ghost1(pub Named, pub Positioned);
+pub struct Ghost1(Named, Positioned);
 
 // entity_struct!(Ghost has [Named, Positioned] aware_of [Displayed]);
 
