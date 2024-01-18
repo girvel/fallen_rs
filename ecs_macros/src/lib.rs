@@ -1,5 +1,3 @@
-use std::alloc::alloc_zeroed;
-
 use proc_macro::TokenStream;
 use quote::{quote, format_ident};
 use syn::{parse_macro_input, ItemStruct, Fields, FnArg, PatType, PatIdent, Pat, Ident, Type, Token, Index, Result, parse2};

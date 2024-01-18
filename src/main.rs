@@ -1,6 +1,6 @@
 use crate::components::{Displayed, Named, Positioned};
 use crate::ecs::{CanRegister, component};
-use crate::entities::ghost::{Ghost, Ghost1};
+use crate::entities::ghost::Ghost;
 use crate::entities::player::Player;
 use crate::systems::print::PrintSystem;
 use crate::vector::Vector2;
@@ -17,13 +17,6 @@ mod systems;  // TODO figure out what to do with this thing
 // TODO third system that accepts only one of the entity types
 
 fn main() {
-    let g1 = Ghost1::new(
-        Named { name: String::from("Testing ghost") },
-        Positioned { position: Vector2(0, 0) },
-    );
-
-    println!("{}", component::<Named, _>(&g1).name);
-
     let mut print_system = PrintSystem::new();
 
     print_system.register(Player::new(
