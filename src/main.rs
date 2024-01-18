@@ -1,11 +1,9 @@
 use crate::components::{Displayed, Named, Positioned};
 use crate::ecs::CanRegister;
-use crate::entities::ghost::Ghost;
+use crate::entities::ghost::{Ghost, Ghost1};
 use crate::entities::player::Player;
 use crate::systems::print::PrintSystem;
 use crate::vector::Vector2;
-
-use ecs_macros::deconstruct;
 
 mod vector;
 mod ecs;
@@ -19,7 +17,10 @@ mod systems;  // TODO figure out what to do with this thing
 // TODO third system that accepts only one of the entity types
 
 fn main() {
-    println!("{}", deconstruct!(40 + 2));
+    let g1 = Ghost1(
+        Named { name: String::from("Ghost 1") },
+        Positioned { position: Vector2(0, 0) },
+    );
 
     let mut print_system = PrintSystem::new();
 
