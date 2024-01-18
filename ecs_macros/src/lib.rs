@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
 use quote::{quote, format_ident};
-use syn::{parse_macro_input, ItemStruct, Fields, FnArg, PatType, PatIdent, Pat};
+use syn::{parse_macro_input, ItemStruct, Fields, FnArg, PatType, PatIdent, Pat, Ident, Type, Token};
 use syn::punctuated::Punctuated;
 
 #[proc_macro_attribute]
@@ -9,7 +9,7 @@ pub fn entity(_args: TokenStream, input: TokenStream) -> TokenStream {
 
     let struct_name = &input.ident;
 
-    let new_args_base: Vec<(syn::Ident, syn::Type)> = match &input.fields {
+    let new_args_base: Vec<(Ident, Type)> = match &input.fields {
         Fields::Unnamed(f) => f,
         _ => panic!("Entity should be a tuple-like struct"),
     }.unnamed
@@ -18,7 +18,7 @@ pub fn entity(_args: TokenStream, input: TokenStream) -> TokenStream {
         .map(|(i, field)| (format_ident!("arg{}", i), field.ty.clone()))
         .collect();
 
-    let new_typed_params: Punctuated<FnArg, syn::token::Comma> = Punctuated::from_iter(
+    let new_typed_params: Punctuated<FnArg, Token![,]> = Punctuated::from_iter(
         new_args_base
             .iter()
             .map(|(ident, ty)| FnArg::Typed(PatType {
@@ -35,7 +35,7 @@ pub fn entity(_args: TokenStream, input: TokenStream) -> TokenStream {
             }))
     );
 
-    let new_params: Punctuated<syn::Ident, syn::token::Comma> = Punctuated::from_iter(
+    let new_params: Punctuated<Ident, Token![,]> = Punctuated::from_iter(
         new_args_base.iter().map(|(ident, _)| ident.clone())
     );
 
