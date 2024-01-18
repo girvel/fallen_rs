@@ -16,6 +16,27 @@ impl Parse for CommaSeparatedTypes {
     }
 }
 
+fn panic_on_duplicates(components: &Vec<&Type>, place: &str) {
+    let duplicate_components: Vec<(usize, &Type)> = components
+        .iter()
+        .cloned()
+        .enumerate()
+        .filter(|(i, c1)| components.iter().skip(i + 1).any(|c2| **c1 == **c2))
+        .collect();
+
+    // TODO test this
+    if duplicate_components.len() > 0 {
+        panic!("Duplicate components present in {}: {}",
+            place,
+            duplicate_components
+                .iter()
+                .map(|(i, &ref c)| format!("{} (#{})", quote! { #c }.to_string(), i))
+                .collect::<Vec<String>>()
+                .join(", ")
+        )
+    }
+}
+
 #[proc_macro_attribute]
 pub fn entity(args: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemStruct);
@@ -31,25 +52,10 @@ pub fn entity(args: TokenStream, input: TokenStream) -> TokenStream {
         .map(|field| &field.ty)
         .collect();
 
+    panic_on_duplicates(&fields, "struct fields");
+
     let all_components: Vec<&Type> = args.types.iter().collect();
-
-    let duplicate_components: Vec<(usize, &Type)> = all_components
-        .iter()
-        .cloned()
-        .enumerate()
-        .filter(|(i, c1)| all_components.iter().skip(i + 1).any(|c2| **c1 == **c2))
-        .collect();
-
-    // TODO test this
-    if duplicate_components.len() > 0 {
-        panic!("Duplicate components present in #[entity]'s arguments: {}",
-            duplicate_components
-                .iter()
-                .map(|(i, &ref c)| format!("{} (#{})", quote! { #c }.to_string(), i))
-                .collect::<Vec<String>>()
-                .join(", ")
-        )
-    }
+    panic_on_duplicates(&all_components, "#[entity]'s arguments");
 
     let new_args_base: Vec<(Ident, &Type)> = fields
         .iter()
