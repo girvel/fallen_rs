@@ -13,13 +13,14 @@ pub fn entity(_args: TokenStream, input: TokenStream) -> TokenStream {
     };
 
     let new_args_vec: Vec<FnArg> = struct_fields.unnamed.iter()
-        .map(|field| FnArg::Typed(PatType {
+        .enumerate()
+        .map(|(i, field)| FnArg::Typed(PatType {
             attrs: vec![],
             pat: Box::new(Pat::Ident(PatIdent {
                 attrs: vec![],
                 by_ref: None, 
                 mutability: None,
-                ident: format_ident!("_"),
+                ident: format_ident!("arg{}", i),
                 subpat: None,
             })),
             colon_token: Default::default(),
