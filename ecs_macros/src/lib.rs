@@ -39,11 +39,20 @@ pub fn entity(_args: TokenStream, input: TokenStream) -> TokenStream {
         new_args_base.iter().map(|(ident, _)| ident.clone())
     );
 
+    let impl_has_components: Vec<proc_macro2::TokenStream> = new_args_base
+        .iter()
+        .map(|(_, ty)| quote! {
+
+        })
+        .collect();
+
     quote! { 
         #input
     
         impl #struct_name {
             pub fn new(#new_typed_params) -> Self { Self(#new_params) }
         }
+
+        #(#impl_has_components)*
     }.into()
 }
