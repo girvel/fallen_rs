@@ -5,7 +5,7 @@ use crate::entities::player::Player;
 use crate::systems::print::PrintSystem;
 use crate::vector::Vector2;
 
-use ecs_macros::entity;
+use ecs_macros::deconstruct;
 
 mod vector;
 mod ecs;
@@ -19,7 +19,7 @@ mod systems;  // TODO figure out what to do with this thing
 // TODO third system that accepts only one of the entity types
 
 fn main() {
-    println!("{}", entity!(42));
+    println!("{}", deconstruct!(40 + 2));
 
     let mut print_system = PrintSystem::new();
 
