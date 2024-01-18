@@ -18,9 +18,11 @@ mod systems;  // TODO figure out what to do with this thing
 
 fn main() {
     let g1 = Ghost1(
-        Named { name: String::from("Ghost 1") },
+        Named { name: String::from("Testing ghost") },
         Positioned { position: Vector2(0, 0) },
     );
+
+    println!("{}", g1.0.name);
 
     let mut print_system = PrintSystem::new();
 
