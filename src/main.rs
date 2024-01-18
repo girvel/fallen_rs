@@ -17,7 +17,7 @@ mod systems;  // TODO figure out what to do with this thing
 // TODO third system that accepts only one of the entity types
 
 fn main() {
-    let g1 = Ghost1(
+    let g1 = Ghost1::new(
         Named { name: String::from("Testing ghost") },
         Positioned { position: Vector2(0, 0) },
     );
