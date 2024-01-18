@@ -12,25 +12,31 @@ pub fn entity(_args: TokenStream, input: TokenStream) -> TokenStream {
         panic!("Entity should be a tuple-like struct")
     };
 
-    let new_args_vec = struct_fields.unnamed.iter()
+    let new_args_base: Vec<(syn::Ident, syn::Type)> = struct_fields.unnamed
+        .iter()
         .enumerate()
-        .map(|(i, field)| FnArg::Typed(PatType {
+        .map(|(i, field)| (format_ident!("arg{}", i), field.ty.clone()))
+        .collect();
+
+    let new_args_vec = new_args_base
+        .iter()
+        .map(|(ident, ty)| FnArg::Typed(PatType {
             attrs: vec![],
             pat: Box::new(Pat::Ident(PatIdent {
                 attrs: vec![],
                 by_ref: None, 
                 mutability: None,
-                ident: format_ident!("arg{}", i),
+                ident: ident.clone(),
                 subpat: None,
             })),
             colon_token: Default::default(),
-            ty: Box::new(field.ty.clone()),
+            ty: Box::new(ty.clone()),
         }))
         .collect::<Vec<FnArg>>();
 
     let new_typed_params: Punctuated<FnArg, syn::token::Comma> = Punctuated::from_iter(new_args_vec);
     let new_params: Punctuated<syn::Ident, syn::token::Comma> = Punctuated::from_iter(
-        (0..new_typed_params.len()).map(|i| format_ident!("arg{}", i))
+        new_args_base.iter().map(|(ident, _)| ident.clone())
     );
 
     quote! { 
