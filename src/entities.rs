@@ -1,9 +1,8 @@
 use ecs_macros::entity;
 use crate::components::{Displayed, Named, Positioned};
-use crate::all_components;
 
-#[entity(all_components!())]
+#[entity(Named, Positioned, Displayed)]
 pub struct Ghost(Named, Positioned);
 
-#[entity(all_components!())]
+#[entity(Named, Positioned, Displayed)]
 pub struct Player(Named, Positioned, Displayed);

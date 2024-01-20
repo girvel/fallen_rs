@@ -1,7 +1,6 @@
-use macro_state::{proc_append_state, proc_read_state_vec};
 use proc_macro::TokenStream;
 use quote::{quote, format_ident};
-use syn::{parse_macro_input, ItemStruct, Fields, FnArg, PatType, PatIdent, Pat, Ident, Type, Token, Index, Result, parse2, parse_str};
+use syn::{parse_macro_input, ItemStruct, Fields, FnArg, PatType, PatIdent, Pat, Ident, Type, Token, Index, Result, parse2};
 use syn::punctuated::Punctuated;
 use syn::parse::{Parse, ParseStream};
 
@@ -128,30 +127,5 @@ pub fn entity(args: TokenStream, input: TokenStream) -> TokenStream {
         #(#impl_has_components)*
 
         #(#impl_aware_of_components)*
-    }.into()
-}
-
-
-#[proc_macro_attribute]
-pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
-    let input_struct = parse_macro_input!(input as ItemStruct);
-    proc_append_state("all_components", &format!("{}", input_struct.ident));
-    quote! { #input_struct }.into()
-}
-
-#[proc_macro]
-pub fn register_components(_: TokenStream) -> TokenStream {
-    let outputs: Vec<Type> = proc_read_state_vec("all_components")
-        .iter()
-        .map(|component_name| parse_str::<Type>(component_name).unwrap())
-        .collect();
-
-    quote! {
-        #[macro_export]
-        macro_rules! _all_components {
-            () => { #(#outputs),* };
-        }
-
-        pub use _all_components as all_components;
     }.into()
 }
