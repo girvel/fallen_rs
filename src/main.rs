@@ -1,7 +1,7 @@
 use crate::components::{Displayed, Named, Positioned};
 use crate::ecs::CanRegister;
 use crate::entities::{Ghost, Player};
-use crate::systems::print::PrintSystem;
+use crate::systems::pseudo_gravity::GravitySystem;
 use crate::vector::Vector2;
 use std::time::Instant;
 
@@ -17,30 +17,22 @@ mod systems;  // TODO figure out what to do with this thing
 // TODO third system that accepts only one of the entity types
 
 fn main() {
-    let mut print_system = PrintSystem::new();
+    let mut gravity_system = GravitySystem::new();
 
-    print_system.register(Player::new(
+    gravity_system.register(Player::new(
         Named { name: String::from("Hugh") },
         Positioned { position: Vector2(42, 0) },
         Displayed { character: String::from("@") },
     ));
-
-    print_system.register(Ghost::new(
-        Named { name: String::from("Ghost 1") },
-        Positioned { position: Vector2(0, 0) },
-    ));
-
-    print_system.register(Ghost::new(
-        Named { name: String::from("Ghost 2") },
-        Positioned { position: Vector2(0, 1) },
-    ));
-
-    print_system.register(Ghost::new(
-        Named { name: String::from("Ghost 3") },
-        Positioned { position: Vector2(0, 2) },
-    ));
+    
+    for i in 0..1_000_000 {
+        gravity_system.register(Ghost::new(
+            Named { name: format!("Ghost #{}", i) },
+            Positioned { position: Vector2(i, 0) },
+        ));
+    }
 
     let now = Instant::now();
-    print_system.update();
+    gravity_system.update();
     println!("dt: {:.2?}", now.elapsed());
 }
