@@ -32,6 +32,7 @@ fn main() {
         ));
     }
 
+    println!("#threads: {}", rayon::current_num_threads());
     let now = Instant::now();
     gravity_system.update();
     println!("dt: {:.2?}", now.elapsed());

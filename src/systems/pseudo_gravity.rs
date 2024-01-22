@@ -1,6 +1,7 @@
 use crate::components::{Entity, Positioned};
 use crate::ecs::{CanRegister, HasComponent, component_mut};
 use crate::entities::{Player, Ghost};
+use rayon::prelude::*;
 
 
 fn gravitate_down<
@@ -30,9 +31,7 @@ impl GravitySystem {
             gravitate_down(player);
         }
 
-        for ghost in &mut self.ghosts {
-            gravitate_down(ghost);
-        }
+        self.ghosts.par_iter_mut().for_each(gravitate_down);
     }
 }
 

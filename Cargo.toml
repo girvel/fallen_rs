@@ -8,3 +8,5 @@ edition = "2021"
 
 [dependencies]
 ecs_macros = { path = "ecs_macros" }
+num_cpus = "1.16.0"
+rayon = "1.8.1"
