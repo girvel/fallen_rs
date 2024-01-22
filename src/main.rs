@@ -3,6 +3,7 @@ use crate::ecs::CanRegister;
 use crate::entities::{Ghost, Player};
 use crate::systems::print::PrintSystem;
 use crate::vector::Vector2;
+use std::time::Instant;
 
 mod vector;
 mod ecs;
@@ -39,5 +40,7 @@ fn main() {
         Positioned { position: Vector2(0, 2) },
     ));
 
+    let now = Instant::now();
     print_system.update();
+    println!("dt: {:.2?}", now.elapsed());
 }
